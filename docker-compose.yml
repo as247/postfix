@@ -1,0 +1,20 @@
+services:
+  postfix:
+    image: as247/postfix
+    environment:
+      - MAIL_DOMAIN=${MAIL_DOMAIN}
+      - MAIL_USER=${MAIL_USER}
+      - MAIL_PASS=${MAIL_PASS}
+    ports:
+      - "2525:25"
+    volumes:
+      - ./dns:/dns
+      - dkim:/etc/opendkim/keys
+    networks:
+      - mail_network
+
+volumes:
+  dkim:
+networks:
+  mail_network:
+    driver: bridge
