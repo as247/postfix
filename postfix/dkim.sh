@@ -17,7 +17,6 @@ if [ ! -f $MAIL_DOMAIN.private ]; then
     #mail key name in format m{year}{monh}{day} eg. m20210801
     mailKey=$(date +"m%Y%m%d")
     opendkim-genkey -s $mailKey -d $MAIL_DOMAIN
-    chown opendkim:opendkim mail.private
     mv $mailKey.private $MAIL_DOMAIN.private
     mv $mailKey.txt $MAIL_DOMAIN.txt
     #echo $mailKey > $MAIL_DOMAIN.mailkey

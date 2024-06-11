@@ -3,8 +3,8 @@ ENV DEBIAN_FRONTEND noninteractive
 # Install postfix with mysql support
 RUN apt-get update && apt-get install -y postfix sasl2-bin dnsutils rsyslog opendkim opendkim-tools mailutils
 
-# Configure rsyslog
-
+VOLUME /data
+VOLUME /etc/opendkim
 
 COPY entrypoint.sh dns.sh dkim.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/*.sh

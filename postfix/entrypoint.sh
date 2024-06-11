@@ -8,12 +8,12 @@ MAIL_USER=${MAIL_USER:-mailer}
 
 # If MAIL_PASS is not set, generate a random password
 if [ -z "$MAIL_PASS" ]; then
-  if [ -f /usr/local/mailpass ]; then
-    MAIL_PASS=$(cat /usr/local/mailpass)
+  if [ -f /data/mailpass ]; then
+    MAIL_PASS=$(cat /data/mailpass)
   else
     #mail pass from env MAIL_PASS or generate random password
     MAIL_PASS=${MAIL_PASS:-$(randomPassword)}
-    echo "$MAIL_PASS" > /usr/local/mailpass
+    echo "$MAIL_PASS" > /data/mailpass
   fi
 fi
 
