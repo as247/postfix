@@ -8,10 +8,14 @@ First, create the volume that postfix will use to store its database:
 ```bash
 docker volume create mailer_data
 ```
+Then, download and install the postfix container:
 ```bash
 docker run -d -p 2525:25 -e MAIL_DOMAIN=example.com --name mailer --restart=always -v mailer_data:/data as247/postfix:latest
 ```
-
+Check login and DKIM key in the logs:
+```bash
+docker logs mailer
+```
 The following environment variables are available:
     
 ```dotenv
