@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # check if $MAIL_DOMAIN is set
 if [ -z "$MAIL_DOMAIN" ]; then
@@ -7,9 +7,9 @@ if [ -z "$MAIL_DOMAIN" ]; then
 fi
 
 # Configure OpenDKIM
-mkdir -p /etc/opendkim/keys
+mkdir -p /data/opendkim/keys
 
-cd /etc/opendkim/keys
+cd /data/opendkim/keys || ( echo "Cannot change directory to /data/opendkim/keys" && exit 1 )
 
 # check if key already exists
 if [ ! -f $MAIL_DOMAIN.private ]; then
@@ -36,10 +36,10 @@ Syslog                  yes
 SyslogSuccess           Yes
 LogWhy                  Yes
 Canonicalization        relaxed/simple
-ExternalIgnoreList      refile:/etc/opendkim/trusted.hosts
-InternalHosts           refile:/etc/opendkim/trusted.hosts
-KeyTable                refile:/etc/opendkim/key.table
-SigningTable            refile:/etc/opendkim/signing.table
+ExternalIgnoreList      refile:/data/opendkim/trusted.hosts
+InternalHosts           refile:/data/opendkim/trusted.hosts
+KeyTable                refile:/data/opendkim/key.table
+SigningTable            refile:/data/opendkim/signing.table
 Mode                    sv
 PidFile                 /run/opendkim.pid
 SignatureAlgorithm      rsa-sha256
@@ -50,20 +50,21 @@ RequireSafeKeys         false
 EOL
 
 # Configure key table
-cat <<EOL > /etc/opendkim/key.table
-$mailKey._domainkey.$MAIL_DOMAIN $MAIL_DOMAIN:$mailKey:/etc/opendkim/keys/$MAIL_DOMAIN.private
+cat <<EOL > /data/opendkim/key.table
+$mailKey._domainkey.$MAIL_DOMAIN $MAIL_DOMAIN:$mailKey:/data/opendkim/keys/$MAIL_DOMAIN.private
 EOL
 
 # Configure signing table
-cat <<EOL > /etc/opendkim/signing.table
+cat <<EOL > /data/opendkim/signing.table
 *@$MAIL_DOMAIN $mailKey._domainkey.$MAIL_DOMAIN
 EOL
 
 # Configure trusted hosts
-cat <<EOL > /etc/opendkim/trusted.hosts
+cat <<EOL > /data/opendkim/trusted.hosts
 0.0.0.0/0
 EOL
-chown -R opendkim:opendkim /etc/opendkim
-chmod -R 0700 /etc/opendkim/keys
-# Start OpenDKIM
-service opendkim start
+#chown -R opendkim:opendkim /etc/opendkim/opendkim.conf
+chown -R opendkim:opendkim /data/opendkim
+chmod -R 0700 /data/opendkim/keys
+# Show the DKIM key
+dns.sh

@@ -2,16 +2,14 @@
 A docker container to use postfix for outbound mail sending. Intended for applications that need to send verification/notification mails, but do not need a full mailserver.
 It also includes opendkim to sign outgoing mails.
 
-## Usage
+## Deployment
 
-Run the container with the following command:
-
+First, create the volume that postfix will use to store its database:
 ```bash
-docker run \
-	-d \
-	-e MAIL_DOMAIN=example.com \
-	as247/postfix:latest
-
+docker volume create mailer_data
+```
+```bash
+docker run -d -p 2525:25 -e MAIL_DOMAIN=example.com --name mailer --restart=always -v mailer_data:/data as247/postfix:latest
 ```
 
 The following environment variables are available:

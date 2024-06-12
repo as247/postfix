@@ -8,13 +8,12 @@ services:
     ports:
       - "2525:25"
     volumes:
-      - ./dns:/dns
-      - dkim:/etc/opendkim/keys
+      - postfix_data:/data
     networks:
       - mail_network
 
 volumes:
-  dkim:
+  postfix_data:
 networks:
   mail_network:
     driver: bridge

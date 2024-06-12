@@ -4,9 +4,8 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install -y postfix sasl2-bin dnsutils rsyslog opendkim opendkim-tools mailutils
 
 VOLUME /data
-VOLUME /etc/opendkim
 
-COPY entrypoint.sh dns.sh dkim.sh /usr/local/bin/
+COPY entrypoint.sh dns.sh dkim.sh postfix.sh sasl.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/*.sh
 EXPOSE 25
 ENTRYPOINT ["entrypoint.sh"]

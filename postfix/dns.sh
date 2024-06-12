@@ -4,14 +4,14 @@ if [ -z "$MAIL_DOMAIN" ]; then
     exit 1
 fi
 # Define the input and output files
-input_file="/etc/opendkim/keys/$MAIL_DOMAIN.txt"
-output_file="/dns/$MAIL_DOMAIN.txt"
+input_file="/data/opendkim/keys/$MAIL_DOMAIN.txt"
+output_file="/data/dns/$MAIL_DOMAIN.txt"
 if [ ! -f "$input_file" ]; then
     echo "Input file not found: $input_file"
     exit 1
 fi
 
-mkdir -p "/dns/"
+mkdir -p "/data/dns/"
 
 ## input file sample
 #mail._domainkey	IN	TXT	( "v=DKIM1; h=sha256; k=rsa; "
@@ -36,7 +36,9 @@ echo -e "${dns_name}\t1\tIN\tTXT\t${txt_value}" > $output_file
 
 # display original key
 # Display the DNS name and value
-echo -e "\e[32mSet DNS setting to:\e[0m"
+echo -e "\e[32mDNS for DKIM:\e[0m"
+echo "******************************************************"
 cat $output_file
+echo "******************************************************"
 
-echo "You also can check dns record in .$output_file"
+echo "You also can check dns record in $output_file"
