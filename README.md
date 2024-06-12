@@ -23,4 +23,5 @@ MAIL_HOSTNAME=mail.example.com
 MAIL_DOMAIN=example.com
 MAIL_USER=mailer
 MAIL_PASS=mailer123
+MAIL_SELECTOR=mail
 ```

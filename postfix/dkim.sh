@@ -14,17 +14,16 @@ cd /data/opendkim/keys || ( echo "Cannot change directory to /data/opendkim/keys
 # check if key already exists
 if [ ! -f $MAIL_DOMAIN.private ]; then
     echo "Generating DKIM key for $MAIL_DOMAIN"
-    #mail key name in format m{year}{monh}{day} eg. m20210801
-    mailKey=$(date +"m%Y%m%d")
-    opendkim-genkey -s $mailKey -d $MAIL_DOMAIN
-    mv $mailKey.private $MAIL_DOMAIN.private
-    mv $mailKey.txt $MAIL_DOMAIN.txt
-    #echo $mailKey > $MAIL_DOMAIN.mailkey
+    mailSelector=${MAIL_SELECTOR:${DKIM_SELECTOR:-$(date +"m%Y%m%d")}}
+    opendkim-genkey -s $mailSelector -d $MAIL_DOMAIN
+    mv $mailSelector.private $MAIL_DOMAIN.private
+    mv $mailSelector.txt $MAIL_DOMAIN.txt
+    #echo $mailSelector > $MAIL_DOMAIN.mailSelector
 fi
 # get mail key from $MAIL_DOMAIN.txt by get string before ._domainkey
-mailKey=$(awk -F'.' '!seen && NF {print $1; seen=1}' $MAIL_DOMAIN.txt)
+mailSelector=$(awk -F'.' '!seen && NF {print $1; seen=1}' $MAIL_DOMAIN.txt)
 #trim leading and trailing whitespace
-mailKey=$(echo $mailKey | xargs)
+mailSelector=$(echo $mailSelector | xargs)
 
 
 # Create OpenDKIM configuration
@@ -51,12 +50,12 @@ EOL
 
 # Configure key table
 cat <<EOL > /data/opendkim/key.table
-$mailKey._domainkey.$MAIL_DOMAIN $MAIL_DOMAIN:$mailKey:/data/opendkim/keys/$MAIL_DOMAIN.private
+$mailSelector._domainkey.$MAIL_DOMAIN $MAIL_DOMAIN:$mailSelector:/data/opendkim/keys/$MAIL_DOMAIN.private
 EOL
 
 # Configure signing table
 cat <<EOL > /data/opendkim/signing.table
-*@$MAIL_DOMAIN $mailKey._domainkey.$MAIL_DOMAIN
+*@$MAIL_DOMAIN $mailSelector._domainkey.$MAIL_DOMAIN
 EOL
 
 # Configure trusted hosts
