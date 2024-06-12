@@ -11,19 +11,34 @@ mkdir -p /data/opendkim/keys
 
 cd /data/opendkim/keys || ( echo "Cannot change directory to /data/opendkim/keys" && exit 1 )
 
-# check if key already exists
+# check for old selector in $MAIL_DOMAIN.txt
+if [ -f $MAIL_DOMAIN.txt ]; then
+    # get mail key from $MAIL_DOMAIN.txt by get string before ._domainkey
+    mailSelectorOld=$(awk -F'.' '!seen && NF {print $1; seen=1}' $MAIL_DOMAIN.txt)
+    #trim leading and trailing whitespace
+    mailSelectorOld=$(echo $mailSelectorOld | xargs)
+fi
+
+#Check if mail selector is set in $MAIL_SELECTOR or $DKIM_SELECTOR
+mailSelector=${MAIL_SELECTOR:-${DKIM_SELECTOR}}
+if [ -z "$mailSelector" ]; then
+    #if mail selector is not set, use old selector or generate new selector
+    mailSelector=${mailSelectorOld:-$(date +"m%Y%m%d")}
+else
+    #if mail selector is set and not equal to old selector, remove old selector files
+    if [ -n "$mailSelectorOld" ] && [ "$mailSelectorOld" != "$mailSelector" ]; then
+        rm -f $MAIL_DOMAIN.private $MAIL_DOMAIN.txt
+    fi
+fi
+
 if [ ! -f $MAIL_DOMAIN.private ]; then
     echo "Generating DKIM key for $MAIL_DOMAIN"
-    mailSelector=${MAIL_SELECTOR:${DKIM_SELECTOR:-$(date +"m%Y%m%d")}}
     opendkim-genkey -s $mailSelector -d $MAIL_DOMAIN
     mv $mailSelector.private $MAIL_DOMAIN.private
     mv $mailSelector.txt $MAIL_DOMAIN.txt
     #echo $mailSelector > $MAIL_DOMAIN.mailSelector
 fi
-# get mail key from $MAIL_DOMAIN.txt by get string before ._domainkey
-mailSelector=$(awk -F'.' '!seen && NF {print $1; seen=1}' $MAIL_DOMAIN.txt)
-#trim leading and trailing whitespace
-mailSelector=$(echo $mailSelector | xargs)
+
 
 
 # Create OpenDKIM configuration
