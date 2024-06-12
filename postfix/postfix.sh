@@ -13,6 +13,9 @@ postconf -e 'inet_interfaces = all'
 postconf -e 'smtp_dns_support_level = dnssec'
 postconf -e 'smtp_host_lookup = dns'
 postconf -e 'smtp_dns_resolver_options = res_defnames'
+# remove received header
+postconf -e 'header_checks = regexp:/etc/postfix/header_checks'
+echo '/^Received:/ IGNORE' > /etc/postfix/header_checks
 
 #log
 postconf -e 'maillog_file = /var/log/mail.log'
