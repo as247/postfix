@@ -23,7 +23,7 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
       - name: Extract version from release tag
-        run: echo "VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
+        run: echo "VERSION=${GITHUB_REF##*/}" | sed 's/^v//' >> $GITHUB_ENV
 
       - name: Build and push multi-arch image
         uses: docker/build-push-action@v5
