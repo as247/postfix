@@ -3,11 +3,34 @@
 # Generate self-signed cert if not exists
 CERT_FILE="/etc/ssl/certs/postfix.crt"
 KEY_FILE="/etc/ssl/private/postfix.key"
+CN="${MAIL_HOSTNAME:-mail.local}"
+echo -e "\e[32mSSL\e[0m"
+echo "******************************************************"
+echo "* Common Name: $CN"
+echo "******************************************************"
 if [ ! -f "$CERT_FILE" ] || [ ! -f "$KEY_FILE" ]; then
   mkdir -p /etc/ssl/certs /etc/ssl/private
   openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-    -keyout "$KEY_FILE" -out "$CERT_FILE" \
-    -subj "/CN=localhost"
+    -keyout "$KEY_FILE" -out "$CERT_FILE" -extensions req_ext \
+    -config <(cat <<EOF
+[req]
+prompt = no
+distinguished_name = dn
+req_extensions = req_ext
+
+[dn]
+CN = $CN
+
+[req_ext]
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = $CN
+DNS.2 = mailer
+DNS.3 = localhost
+EOF
+)
+
   chmod 600 "$KEY_FILE"
 fi
 
