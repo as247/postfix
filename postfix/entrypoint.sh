@@ -33,6 +33,8 @@ echo ""
 dkim.sh
 # Configure and start SASL
 sasl.sh
+# Configure SSL
+ssl.sh
 # Configure and start Postfix
 postfix.sh
 
