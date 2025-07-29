@@ -25,3 +25,28 @@ MAIL_USER=mailer
 MAIL_PASS=mailer123
 MAIL_SELECTOR=mail
 ```
+
+## Using docker-compose
+If you prefer to use docker-compose, you can use the following `docker-compose.yml` file:
+
+```yaml
+services:
+  postfix:
+    image: as247/postfix
+    environment:
+      - MAIL_DOMAIN=${MAIL_DOMAIN}
+      - MAIL_USER=${MAIL_USER}
+      - MAIL_PASS=${MAIL_PASS}
+    ports:
+      - "2525:25"
+    volumes:
+      - postfix_data:/data
+    networks:
+      - mail_network
+
+volumes:
+  postfix_data:
+networks:
+  mail_network:
+    driver: bridge
+```
