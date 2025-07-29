@@ -28,7 +28,7 @@ jobs:
       - name: Build and push multi-arch image
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./postfix
           file: ./postfix/Dockerfile
           push: true
           platforms: linux/amd64,linux/arm64
