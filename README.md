@@ -34,6 +34,7 @@ services:
   postfix:
     image: as247/postfix
     environment:
+      - MAIL_HOSTNAME=${MAIL_HOSTNAME}
       - MAIL_DOMAIN=${MAIL_DOMAIN}
       - MAIL_USER=${MAIL_USER}
       - MAIL_PASS=${MAIL_PASS}
